@@ -97,37 +97,6 @@ objects:
     - imageChange: {}
       type: ImageChange
 - apiVersion: v1
-  kind: BuildConfig
-  metadata:
-    labels:
-      name: oso-rhel7-zagg-web
-    name: oso-rhel7-zagg-web
-  spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: oso-rhel7-zagg-web:latest
-    resources: {}
-    source:
-      contextDir: docker/oso-zagg-web/rhel7
-      git:
-        uri: https://github.com/openshift/openshift-tools
-        ref: prod
-      type: Git
-    strategy:
-      dockerStrategy:
-        env:
-        - name: OO_PAUSE_ON_BUILD
-          value: 'false'
-        from:
-          kind: ImageStreamTag
-          name: oso-rhel7-ops-base:latest
-        noCache: true
-      type: Docker
-    triggers:
-    - imageChange: {}
-      type: ImageChange
-- apiVersion: v1
   kind: ImageStream
   metadata:
     labels:
@@ -158,8 +127,9 @@ objects:
   metadata:
     labels:
       name: oso-rhel7-zagg-web
-    name: oso-rhel7-zagg-web
-  spec: {}
+    name: oso-rhel7-zagg-web:prod
+  spec:
+    dockerImageRepository: registry.ops.openshift.com/ops/oso-rhel7-zagg-web:prod
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -324,7 +294,7 @@ objects:
           deploymentconfig: oso-rhel7-zagg-web
       spec:
         containers:
-        - image: monitoring/oso-rhel7-zagg-web:latest
+        - image: registry.ops.openshift.com/ops/oso-rhel7-zagg-web:prod
           imagePullPolicy: Always
           name: oso-rhel7-zagg-web
           resources: {}
@@ -345,14 +315,6 @@ objects:
             secretName: monitoring-secrets
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - oso-rhel7-zagg-web
-        from:
-          kind: ImageStreamTag
-          name: oso-rhel7-zagg-web:latest
-      type: ImageChange
     resources:
       limits:
         cpu: 1000m
