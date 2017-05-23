@@ -337,3 +337,8 @@ g_template_os_linux:
     url: "https://github.com/openshift/ops-sop/blob/master/v3/alerts/check_yum_update.asciidoc"
     priority: info
     description: "One or more security updates need to be applied to the host"
+
+  - name: "pcp items send failed on {HOST.NAME}"
+    expression: "{Template OS Linux:kernel.uname.sysname.max(#3)}<1"
+    url: "https://github.com/openshift/ops-sop/blob/master/v3/alerts/check_pcp_ping.asciidoc"
+    priority: average
